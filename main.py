@@ -6,6 +6,8 @@ import requests
 from webserver import keep_alive
 
 my_secret = os.environ['TOKEN']
+my_second_secret = os.environ['AIKEY']
+
 client = discord.Client()
 
 command = ['fruit bar', 'smite night', 'mics on', 'motivation monday', 'fruit bot commands', 'vektus tinder', 'double fisted', 'shittom', 'ceramiclord', 'buckly','barf','zaddi','soyboy liberal cuck','drak','sifu','love barf','call buckly','penis']
@@ -29,20 +31,35 @@ async def on_message(message):
         respTxt = msg.split(" ")[2:][0]
       except IndexError:
         if cmdTxt != 'info':
-          await message.reply("You forgot the response <:2999pepega:884819722519068673>")
-        respTxt = "You forgot the response <:2999pepega:884819722519068673>"
+          await message.reply("You forgot the response<:2999pepega:884819722519068673>")
+        respTxt = "You forgot the response<:2999pepega:884819722519068673>"
 
       # !newcommand info ; lists requirements for function
       if cmdTxt == 'info':
         await message.reply('Commands must be in this format:\n!newcommand <command> <response>\n\t- Only one word commands and responses\n\t- <:7260peepono:884819725186650143> spaces in <command> and <response>')
       elif cmdTxt in command:
-        await message.reply('<:2999pepega:884819722519068673> Command already exists! <:2999pepega:884819722519068673>')
+        await message.reply('<:2999pepega:884819722519068673>Command already exists!<:2999pepega:884819722519068673>')
       else:
         # Add to database
         db[cmdTxt] = respTxt
-        await message.reply("<:2940coolpepe:884819724259692555> " + cmdTxt + " command added <:2940coolpepe:884819724259692555>")
+        await message.reply("<:2940coolpepe:884819724259692555>" + cmdTxt + " command added<:2940coolpepe:884819724259692555>")
       return
     
+    # Delete a command from database
+    elif message.content.startswith('!deletecommand '):
+      # Get command and response
+      msg = message.content
+      cmdTxt = message.content
+      cmdTxt = msg.split(" ")[1:][0]
+      
+      if cmdTxt == 'info':
+        await message.reply("**Format:** !deletecommand <command>")
+      elif cmdTxt in db.keys():
+        del db[cmdTxt]
+        await message.reply("<:9774pepehappy:884819725048238102>" + cmdTxt + " command deleted<:9774pepehappy:884819725048238102>")
+      else:
+        await message.reply("<:2999pepega:884819722519068673>Command doesn't exist<:2999pepega:884819722519068673>")
+
     # If command is within the list above
     elif  message.content in command:
       index = command.index(message.content)
@@ -96,13 +113,13 @@ async def on_message(message):
           data={
               'text': msg,
           },
-          headers={'api-key': '62363f0a-e849-4c6d-98e4-e92eb3987c7e'})
+          headers={'api-key': my_second_secret})
       await message.reply(r.json()['output_url'])
       return
 
     # Updated 12/9/21
     elif message.content.startswith('patch notes'):
-      await message.reply("**<:2705peepodealwithit:884819725140525086>NEW UPDATE!<:2705peepodealwithit:884819725140525086>**\nLast updated 12/9/21\n\t- Custom commands are now persistant and will not reset<:6573peepoyes:884819725392183356>\n\t- Capable of holding at max 5000 commands")
+      await message.reply("**<:2705peepodealwithit:884819725140525086>NEW UPDATE!<:2705peepodealwithit:884819725140525086>**\nLast updated 12/9/21\n\t- Custom commands are now persistant and will not reset<:6573peepoyes:884819725392183356>\n\t- Capable of holding at max 5000 commands\n\t- !deletecommand added, type !deletecommand info")
   
 
 keep_alive()
