@@ -1,3 +1,4 @@
+from replit import db
 import os
 import discord
 import random
@@ -16,13 +17,14 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    # Create a custom command and response
     if message.content.startswith('!newcommand '):
       msg = message.content
       cmdTxt = message.content
       cmdTxt = msg.split(" ")[1:][0]
-
       respTxt = message.content
       
+      # Get response, verify a response is given
       try:
         respTxt = msg.split(" ")[2:][0]
       except IndexError:
@@ -30,21 +32,25 @@ async def on_message(message):
           await message.reply("You forgot the response <:2999pepega:884819722519068673>")
         respTxt = "You forgot the response <:2999pepega:884819722519068673>"
 
+      # !newcommand info ; lists requirements for function
       if cmdTxt == 'info':
-        await message.reply('Commands must be in this format:\n!newcommand <command> <response>\n\t- Only one word commands\n\t- <:7260peepono:884819725186650143> spaces\n\t- Custom commands are wiped when bot is reset <:9548feelsweakman:884819724620415036>')
+        await message.reply('Commands must be in this format:\n!newcommand <command> <response>\n\t- Only one word commands and responses\n\t- <:7260peepono:884819725186650143> spaces in <command> and <response>')
       elif cmdTxt in command:
         await message.reply('<:2999pepega:884819722519068673> Command already exists! <:2999pepega:884819722519068673>')
       else:
-        command.append(cmdTxt)
-        response.append(respTxt)
+        # Add to database
+        db[cmdTxt] = respTxt
         await message.reply("<:2940coolpepe:884819724259692555> " + cmdTxt + " command added <:2940coolpepe:884819724259692555>")
-      
       return
     
+    # If command is within the list above
     elif  message.content in command:
       index = command.index(message.content)
-
       await message.reply(response[index])
+    
+    # If command is in the database
+    elif message.content in db.keys():
+      await message.reply(db[message.content])
 
     # Random response
     elif message.content.startswith('sup g') or message.content.startswith(
@@ -93,6 +99,10 @@ async def on_message(message):
           headers={'api-key': '62363f0a-e849-4c6d-98e4-e92eb3987c7e'})
       await message.reply(r.json()['output_url'])
       return
+
+    # Updated 12/9/21
+    elif message.content.startswith('patch notes'):
+      await message.reply("**<:2705peepodealwithit:884819725140525086>NEW UPDATE!<:2705peepodealwithit:884819725140525086>**\nLast updated 12/9/21\n\t- Custom commands are now persistant and will not reset<:6573peepoyes:884819725392183356>\n\t- Capable of holding at max 5000 commands")
   
 
 keep_alive()
